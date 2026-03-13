@@ -629,6 +629,25 @@ class AgentClient:
             self._messages.pop(0)
             removed += 1
 
+        # Strip leading tool_result messages — their tool_use was trimmed.
+        # The API requires every tool_result to have a matching tool_use in
+        # the preceding assistant message. After trimming, the first user
+        # message may be a tool_result whose tool_use is gone.
+        while self._messages and self._messages[0].get("role") == "user":
+            content = self._messages[0].get("content", [])
+            if isinstance(content, list) and any(
+                isinstance(b, dict) and b.get("type") == "tool_result"
+                for b in content
+            ):
+                self._messages.pop(0)
+                removed += 1
+                # Also drop the next assistant message to maintain alternation
+                if self._messages and self._messages[0].get("role") == "assistant":
+                    self._messages.pop(0)
+                    removed += 1
+            else:
+                break  # First user message is clean text — we're good
+
         logger.info(
             f"Window rotation: removed {removed} messages "
             f"(~{tokens_removed:,} tokens). "

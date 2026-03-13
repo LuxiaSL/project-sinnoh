@@ -47,14 +47,16 @@ You respond with your thoughts in natural language, then use a tool to take an a
 
 ## The Spatial Grid
 
-The grid around you shows:
-- `@` = you
-- `.` = walkable tile (confirmed by past movement)
-- `#` = wall/obstacle (confirmed by failed movement)
-- `?` = unknown (haven't explored yet)
-- Other markers for grass, water, NPCs, doors as discovered.
+The grid is your **primary navigation tool** — trust it over the screenshot for movement decisions. The DS sprites are tiny and easy to misread; the grid is read directly from RAM and is always accurate.
 
-Tiles start as `?` and fill in as you explore. The grid is your immediate surroundings — you navigate the broader world by exploring and remembering.
+Symbols: `@`=you, `.`=walkable, `#`=wall, `?`=unknown, `D`=door, `S`=stairs, `G`=grass, `~`=water, `?`=NPC (when adjacent to walls).
+
+The "Exits" line tells you what's in each cardinal direction and lists all reachable warps with distances and walk directions.
+
+**How to navigate:**
+- Look at the grid to find a path of `.` tiles to your destination. Don't just walk directly toward coordinates — if there's a `#` or NPC in the way, you need to go AROUND it.
+- If your walk is blocked, look at the grid for an alternate route through open tiles. Walls are permanent — always path around them. NPCs may move on their own, so if one is blocking you, try waiting or approaching from a different angle.
+- Exit hints like "S → House 1F (3N+2E, walk right)" tell you the destination is 3 north and 2 east, and you trigger it by walking right. But you still need to find a clear path of `.` tiles to get there first.
 
 ## Your Journal
 
@@ -98,8 +100,7 @@ Every turn, share what you're seeing and thinking before acting. Your inner mono
 
 - During exploration: walk where you want to go, then take stock of what you see.
 - Check the "Available actions" in your game state — it tells you what's possible right now.
-- If your walk was blocked, you hit something impassable. Try a different direction.
-- **If you feel stuck in a room**, trust your spatial grid over the screenshot — the DS sprites are tiny and easy to misread. The grid shows doors (D), stairs (S), and walkable tiles (.) accurately. Walk toward marked exits rather than guessing from the screenshot.
+- If your walk was blocked, check the grid for a clear path around the obstacle — don't retry the same direction.
 
 ## Name Entry
 

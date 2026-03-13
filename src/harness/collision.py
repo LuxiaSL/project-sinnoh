@@ -814,8 +814,24 @@ class CollisionReader:
         lines: list[str] = []
 
         # --- Exits summary ---
+        # Check if player is standing ON a collision-type warp (stairs, etc.)
+        # where walking in the trigger direction enters a wall tile.
+        # For these, override the neighbor check to show the warp destination
+        # instead of "wall". Skip embedded warps (doors) — for those the
+        # trigger tile is walkable and the neighbor check works normally.
+        player_tile = ws.grid.get(local_px, local_py)
+        player_warp = warp_at.get((local_px, local_py))
+        player_warp_dir = ""
+        if player_tile.is_warp and player_tile.collision and player_warp:
+            player_warp_dir = WARP_WALK_DIR.get(player_tile.behavior, "")
+
         neighbors: list[str] = []
         for name, dx, dy in [("up", 0, -1), ("down", 0, 1), ("left", -1, 0), ("right", 1, 0)]:
+            # If player is on a warp and this direction triggers it, show the warp
+            if player_warp_dir == name and player_warp:
+                neighbors.append(f"{name}=warp({player_warp.dest_name})")
+                continue
+
             nx, ny = local_px + dx, local_py + dy
             npc = npc_at.get((nx, ny))
             tile = ws.grid.get(nx, ny)

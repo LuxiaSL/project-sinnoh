@@ -1249,28 +1249,27 @@ class AgentLoop:
                 local_y = check_y % 32
                 tile = ws.grid.get(local_x, local_y)
 
-                # Check for warp tiles (doors, stairs, warp panels)
-                if tile.behavior in WARP_BEHAVIORS:
+                # Check for warp tiles (doors, stairs, warp panels).
+                # Allow walking ONTO the warp (the game handles the transition).
+                # Only clamp if there are more steps AFTER the warp — those
+                # would execute on the wrong map after the transition.
+                if tile.behavior in WARP_BEHAVIORS and step < steps:
                     warp = warp_at.get((check_x, check_y))
                     dest = warp.dest_name if warp else "unknown area"
                     ch = WARP_CHARS.get(tile.behavior, "door")
-                    safe_steps = step - 1
-                    if safe_steps < 1:
-                        return tc, ""  # Warp is the very first tile — let it happen
+                    # Walk up to and including the warp tile
                     new_input = dict(tc.input)
-                    new_input["steps"] = safe_steps
+                    new_input["steps"] = step
                     new_tc = ToolCall(id=tc.id, name=tc.name, input=new_input)
-                    return new_tc, f"(Stopped before {ch} → {dest} at ({check_x},{check_y}))"
+                    return new_tc, f"(Stopped at {ch} → {dest})"
 
-                # Check for ledge tiles (one-way jumps)
-                if tile.behavior in LEDGE_BEHAVIORS:
-                    safe_steps = step - 1
-                    if safe_steps < 1:
-                        return tc, ""
+                # Check for ledge tiles (one-way jumps).
+                # Same logic — allow the ledge step, stop after.
+                if tile.behavior in LEDGE_BEHAVIORS and step < steps:
                     new_input = dict(tc.input)
-                    new_input["steps"] = safe_steps
+                    new_input["steps"] = step
                     new_tc = ToolCall(id=tc.id, name=tc.name, input=new_input)
-                    return new_tc, f"(Stopped before ledge at ({check_x},{check_y}))"
+                    return new_tc, f"(Stopped at ledge)"
 
         except Exception as e:
             logger.debug(f"Walk hazard check failed: {e}")
