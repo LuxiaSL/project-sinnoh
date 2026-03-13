@@ -1,0 +1,61 @@
+# CLAUDE.md (local project instructions)
+CLAUDE.md
+
+# Savestates
+*.dst
+
+# Emulator save data
+platinum_save/
+
+# Traces / run output
+traces/
+
+# Test output (screenshots, savestates)
+tests/output/
+
+# Reference repos (clone separately — see README)
+references/pokeplatinum/
+references/ClaudePlaysPokemonStarter/
+references/llm_pokemon_scaffold/
+references/GeminiPlaysPokemonLive/
+
+# Development journals and research docs (local only)
+journal/
+MASTER_PLAN.md
+harness_design.md
+platinum_memory_map.md
+pkmn_deep_research.md
+research_harnesses_and_nds.md
+twitch_integration_research.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+.eggs/
+dist/
+build/
+
+# IDE / Editor
+.obsidian/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+
+# Claude Code
+.claude/
+
+# ROMs (copyrighted material)
+roms/
